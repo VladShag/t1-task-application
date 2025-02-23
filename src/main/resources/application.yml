@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: task-application
+  datasource:
+    url: jdbc:postgresql://db:5432/taskdb
+    username: postgres
+    password: 12345
+  jpa:
+    hibernate:
+      ddl-auto: none
+  liquibase:
+    change-log: classpath:/db/changelog/db.changelog-master.yaml
