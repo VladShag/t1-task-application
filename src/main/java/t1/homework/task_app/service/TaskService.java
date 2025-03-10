@@ -2,15 +2,19 @@ package t1.homework.task_app.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import t1.homework.task_app.annotation.LogAfterReturning;
 import t1.homework.task_app.annotation.LogAfterThrowing;
 import t1.homework.task_app.annotation.LogAround;
 import t1.homework.task_app.annotation.LogBefore;
 import t1.homework.task_app.dto.TaskRecordDto;
+import t1.homework.task_app.dto.TaskStatusChangeDto;
+import t1.homework.task_app.exception.TaskBadRequestException;
 import t1.homework.task_app.exception.TaskNotFoundException;
 import t1.homework.task_app.mapper.TaskMapper;
 import t1.homework.task_app.model.Task;
 import t1.homework.task_app.repository.TaskRepository;
+import t1.homework.task_app.service.kafka.KafkaProducerService;
 
 import java.util.List;
 
@@ -20,8 +24,11 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class TaskService {
+    private static final String TASK_STATUS_UPDATE_SUBJECT = "Task Status Change Notification";
+
     private final TaskRepository taskRepository;
     private final TaskMapper taskMapper;
+    private final KafkaProducerService kafkaProducerService;
 
     /**
      * Создать новую задачу.
@@ -62,17 +69,28 @@ public class TaskService {
     }
 
     /**
-     * Изменить задачу по её идентификатору.
+     * Изменить задачу по её идентификатору и отправить уведомление об изменении, если статус задачи изменился.
      *
      * @param id ИД задачи
      * @param taskDetails {@link TaskRecordDto} ДТО с данными для изменения задачи
      * @return {@link TaskRecordDto} дто измененной задачи задачи
      */
     @LogAround
-    public TaskRecordDto updateTask(Long id, TaskRecordDto taskDetails) {
+    @Transactional
+    public TaskRecordDto updateTaskAndSendNotification(Long id, TaskRecordDto taskDetails) {
+        if (taskDetails == null) {
+            throw new TaskBadRequestException("Не получены данные для обновления задачи");
+        }
+
         Task task = taskRepository.findById(id).orElseThrow();
         taskMapper.updateFromDto(task, taskDetails);
         taskRepository.save(task);
+
+        if (taskDetails.getStatus() != null) {
+            TaskStatusChangeDto statusChangeDto = taskMapper.toTaskStatusChangeDto(task, TASK_STATUS_UPDATE_SUBJECT);
+            kafkaProducerService.sendTaskStatusChange(statusChangeDto);
+        }
+
         return taskMapper.toDto(task);
     }
 

@@ -5,6 +5,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import t1.homework.task_app.dto.TaskRecordDto;
+import t1.homework.task_app.dto.TaskStatusChangeDto;
 import t1.homework.task_app.model.Task;
 
 import java.util.List;
@@ -22,6 +23,11 @@ public interface TaskMapper {
     void updateFromDto(@MappingTarget Task task, TaskRecordDto taskRecordDto);
 
     TaskRecordDto toDto(Task task);
+
+    @Mapping(target = "taskId", source = "task.id")
+    @Mapping(target = "newStatus", source = "task.status")
+    @Mapping(target = "subject", source = "subject")
+    TaskStatusChangeDto toTaskStatusChangeDto(Task task, String subject);
 
     List<TaskRecordDto> toDtoList(List<Task> task);
 }

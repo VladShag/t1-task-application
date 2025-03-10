@@ -10,3 +10,47 @@ spring:
       ddl-auto: none
   liquibase:
     change-log: classpath:/db/changelog/db.changelog-master.yaml
+  kafka:
+    bootstrap-servers: broker:29092
+    consumer:
+      group-id: task-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring:
+          json:
+            value:
+              default:
+                type: t1.homework.task_app.dto.TaskStatusChangeDto
+            trusted:
+              packages: t1.homework.task_app
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: application.task.t1@gmail.com
+    password: 'rigj ynyd pvxb jbra'
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+kafka:
+  session:
+    timeout:
+      ms: 10000
+  max:
+    partition:
+      fetch:
+        bytes: 300000
+    poll:
+      records: 10
+      interval:
+        ms: 180000
+  topic:
+    task-status-change:
+      name: task-status-changes

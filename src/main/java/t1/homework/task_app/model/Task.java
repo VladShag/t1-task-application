@@ -22,4 +22,6 @@ public class Task {
     private String title;
     private String description;
     private Long userId;
+    private String status;
+    private String email;
 }
