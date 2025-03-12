@@ -21,7 +21,7 @@ public class ResponseWrapperAdvice implements ResponseBodyAdvice<Object> {
 
     @Override
     @NonNull
-    public Object beforeBodyWrite(@NonNull Object body, @NonNull MethodParameter returnType, @NonNull MediaType selectedContentType,
+    public Object beforeBodyWrite(Object body, @NonNull MethodParameter returnType, @NonNull MediaType selectedContentType,
                                   @NonNull Class selectedConverterType, @NonNull ServerHttpRequest request, @NonNull ServerHttpResponse response) {
         if (body instanceof ApiResponse) {
             return body;

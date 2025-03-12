@@ -82,7 +82,7 @@ public class TaskService {
             throw new TaskBadRequestException("Не получены данные для обновления задачи");
         }
 
-        Task task = taskRepository.findById(id).orElseThrow();
+        Task task = taskRepository.findById(id).orElseThrow(() -> new TaskNotFoundException("Не найдено задачи по id: " + id));
         taskMapper.updateFromDto(task, taskDetails);
         taskRepository.save(task);
 
