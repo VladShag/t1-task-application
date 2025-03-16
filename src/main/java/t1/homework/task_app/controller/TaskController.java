@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.vshagalov.logging_starter.annotation.LogAround;
 import t1.homework.task_app.dto.TaskRecordDto;
 import t1.homework.task_app.model.Task;
 import t1.homework.task_app.service.TaskService;
@@ -32,6 +33,7 @@ public class TaskController {
      * @return сущность {@link Task} созданной задачи
      */
     @PostMapping
+    @LogAround
     public TaskRecordDto createTask(@RequestBody TaskRecordDto task) {
         return taskService.createTask(task);
     }
@@ -43,6 +45,7 @@ public class TaskController {
      * @return {@link TaskRecordDto} дто задачи
      */
     @GetMapping("/{id}")
+    @LogAround
     public TaskRecordDto getTaskById(@PathVariable Long id) {
         return taskService.getTaskById(id);
     }
@@ -55,6 +58,7 @@ public class TaskController {
      * @return {@link TaskRecordDto} дто измененной задачи задачи
      */
     @PutMapping("/{id}")
+    @LogAround
     public TaskRecordDto updateTask(@PathVariable Long id, @RequestBody TaskRecordDto taskDetails) {
         return taskService.updateTaskAndSendNotification(id, taskDetails);
     }
@@ -65,6 +69,7 @@ public class TaskController {
      * @param id ИД задачи
      */
     @DeleteMapping("/{id}")
+    @LogAround
     public void deleteTask(@PathVariable Long id) {
         taskService.deleteTask(id);
     }
@@ -75,6 +80,7 @@ public class TaskController {
      * @return список сущностей {@link Task} задач
      */
     @GetMapping
+    @LogAround
     public List<TaskRecordDto> getAllTasks() {
         return taskService.getAllTasks();
     }

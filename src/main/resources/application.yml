@@ -54,3 +54,9 @@ kafka:
   topic:
     task-status-change:
       name: task-status-changes
+logging-starter:
+  enabled: true
+  include-packages: t1.homework.task_app.controller
+  exclude-packages: t1.homework.task_app.service
+  formatPattern: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
+  level: INFO
